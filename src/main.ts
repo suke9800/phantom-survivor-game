@@ -118,6 +118,40 @@ const SFX_OUTPUT_BOOST = 2.35;
 const UI_SFX_OUTPUT_BOOST = 1.8;
 const CONTACT_DAMAGE_SCALE = 1.65;
 
+function assetPath(path: string): string {
+  return `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '')}`;
+}
+
+function installAssetCssVars(): void {
+  const vars: Record<string, string> = {
+    '--img-slot-blue': 'assets/ui/kit/sliced/slot-blue.png',
+    '--img-hp-frame': 'assets/ui/kit/sliced/hp-frame.png',
+    '--img-hp-fill': 'assets/ui/kit/sliced/hp-fill.png',
+    '--img-xp-frame': 'assets/ui/kit/sliced/xp-frame.png',
+    '--img-xp-fill': 'assets/ui/kit/sliced/xp-fill.png',
+    '--img-lobby-bg': 'assets/ui/lobby-bg.png',
+    '--img-character-card': 'assets/ui/kit/sliced/character-card.png',
+    '--img-btn-gold-normal': 'assets/ui/buttons/gold-normal.png',
+    '--img-btn-gold-hover': 'assets/ui/buttons/gold-hover.png',
+    '--img-btn-gold-pressed': 'assets/ui/buttons/gold-pressed.png',
+    '--img-btn-gray-normal': 'assets/ui/buttons/gray-normal.png',
+    '--img-btn-blue-normal': 'assets/ui/buttons/blue-normal.png',
+    '--img-btn-blue-hover': 'assets/ui/buttons/blue-hover.png',
+    '--img-btn-blue-pressed': 'assets/ui/buttons/blue-pressed.png',
+    '--img-btn-red-normal': 'assets/ui/buttons/red-normal.png',
+    '--img-boss-frame': 'assets/ui/kit/sliced/boss-frame.png',
+    '--img-boss-fill': 'assets/ui/kit/sliced/boss-fill.png',
+    '--img-pause-panel': 'assets/ui/kit/sliced/pause-panel.png',
+    '--img-upgrade-card': 'assets/ui/kit/sliced/upgrade-card.png',
+    '--img-mobile-pause-normal': 'assets/ui/mobile/pause-normal.png',
+    '--img-mobile-pause-pressed': 'assets/ui/mobile/pause-pressed.png',
+  };
+  const root = document.documentElement;
+  for (const [name, path] of Object.entries(vars)) root.style.setProperty(name, `url("${assetPath(path)}")`);
+}
+
+installAssetCssVars();
+
 const WEAPON_NAMES: Record<WeaponId, string> = {
   spark: '별빛 마력탄',
   blade: '회전 단검',
@@ -642,7 +676,7 @@ class SurvivalScene extends Phaser.Scene {
       button.className = `character-select ${saveData.selectedCharacter === character.id ? 'selected' : ''}`;
       button.dataset.character = character.id;
       button.innerHTML = `
-        <img src="/assets/characters/v2/${character.id}-portrait.png" alt="" />
+        <img src="${assetPath(`assets/characters/v2/${character.id}-portrait.png`)}" alt="" />
         <strong>${character.name}</strong>
         <span>${character.role}</span>
         <small>시작 무기: ${WEAPON_NAMES[character.startWeapon]}<br>${character.ability}</small>
@@ -666,7 +700,7 @@ class SurvivalScene extends Phaser.Scene {
     if (hud.pauseSoundToggle) hud.pauseSoundToggle.checked = saveData.sound;
     if (hud.bgmVolume) hud.bgmVolume.value = `${saveData.bgmVolume}`;
     if (hud.sfxVolume) hud.sfxVolume.value = `${saveData.sfxVolume}`;
-    if (hud.selectedPortrait) hud.selectedPortrait.src = `/assets/characters/v2/${character.id}-portrait.png`;
+    if (hud.selectedPortrait) hud.selectedPortrait.src = assetPath(`assets/characters/v2/${character.id}-portrait.png`);
     if (hud.selectedName) hud.selectedName.textContent = character.name;
     if (hud.selectedRole) hud.selectedRole.textContent = character.role;
     if (hud.lobbySummary) hud.lobbySummary.textContent = `${character.name} 선택됨. ${STAGES[saveData.lastStage].label} 준비 중. 10분 생존에 도전하세요.`;
@@ -1383,14 +1417,14 @@ class SurvivalScene extends Phaser.Scene {
 
   private loadAssets(): void {
     for (const character of CHARACTERS) {
-      for (let i = 0; i < 5; i += 1) this.load.image(`${character.id}-${i}`, `/assets/characters/v2/${character.id}-${i}.png`);
+      for (let i = 0; i < 5; i += 1) this.load.image(`${character.id}-${i}`, assetPath(`assets/characters/v2/${character.id}-${i}.png`));
     }
-    for (const key of ['bat', 'bat0', 'bat1', 'slime', 'slime0', 'slime1', 'skull', 'skull0', 'skull1', 'mage', 'mage0', 'mage1']) this.load.image(key, `/assets/gpt-sprites/sliced/${key}.png`);
-    for (const key of ['reaper', 'wisp', 'wisp0', 'oni', 'oni0', 'lancer', 'lancer0', 'kitsune']) this.load.image(key, `/assets/gpt-sprites/sliced/${key}.png`);
-    for (const key of ['xp', 'heart', 'magnet', 'bomb', 'sparkShot', 'bladeShot', 'boltShot', 'flameShot']) this.load.image(key, `/assets/gpt-sprites/sliced/${key}.png`);
-    for (const key of TERRAIN_KEYS.graveyard) this.load.image(`terrain-${key}`, `/assets/maps/graveyard-seamless/${key}.png`);
-    for (const key of TERRAIN_KEYS.academy) this.load.image(`terrain-${key}`, `/assets/maps/academy-seamless/${key}.png`);
-    for (const key of ['bones', 'petals', 'paper', 'mist', 'gravestone', 'dead-tree', 'ruined-wall', 'stone-pillar', 'bookshelf', 'desk', 'academy-column', 'altar']) this.load.image(`obs-${key}`, `/assets/maps/obstacles/${key}.png`);
+    for (const key of ['bat', 'bat0', 'bat1', 'slime', 'slime0', 'slime1', 'skull', 'skull0', 'skull1', 'mage', 'mage0', 'mage1']) this.load.image(key, assetPath(`assets/gpt-sprites/sliced/${key}.png`));
+    for (const key of ['reaper', 'wisp', 'wisp0', 'oni', 'oni0', 'lancer', 'lancer0', 'kitsune']) this.load.image(key, assetPath(`assets/gpt-sprites/sliced/${key}.png`));
+    for (const key of ['xp', 'heart', 'magnet', 'bomb', 'sparkShot', 'bladeShot', 'boltShot', 'flameShot']) this.load.image(key, assetPath(`assets/gpt-sprites/sliced/${key}.png`));
+    for (const key of TERRAIN_KEYS.graveyard) this.load.image(`terrain-${key}`, assetPath(`assets/maps/graveyard-seamless/${key}.png`));
+    for (const key of TERRAIN_KEYS.academy) this.load.image(`terrain-${key}`, assetPath(`assets/maps/academy-seamless/${key}.png`));
+    for (const key of ['bones', 'petals', 'paper', 'mist', 'gravestone', 'dead-tree', 'ruined-wall', 'stone-pillar', 'bookshelf', 'desk', 'academy-column', 'altar']) this.load.image(`obs-${key}`, assetPath(`assets/maps/obstacles/${key}.png`));
   }
 
   private makeRuntimeTextures(): void {
@@ -1466,7 +1500,7 @@ class SurvivalScene extends Phaser.Scene {
 
   private ensureBgm(): void {
     if (this.bgm) return;
-    this.bgm = new Audio('/assets/audio/The_Stone_Descent.mp3');
+    this.bgm = new Audio(assetPath('assets/audio/The_Stone_Descent.mp3'));
     this.bgm.loop = true;
     this.bgm.volume = saveData.bgmVolume;
   }

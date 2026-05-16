@@ -6,6 +6,27 @@
   --gold: #ffd767;
   --cyan: #54d9ff;
   --rose: #ff6f9d;
+  --img-slot-blue: none;
+  --img-hp-frame: none;
+  --img-hp-fill: none;
+  --img-xp-frame: none;
+  --img-xp-fill: none;
+  --img-lobby-bg: none;
+  --img-character-card: none;
+  --img-btn-gold-normal: none;
+  --img-btn-gold-hover: none;
+  --img-btn-gold-pressed: none;
+  --img-btn-gray-normal: none;
+  --img-btn-blue-normal: none;
+  --img-btn-blue-hover: none;
+  --img-btn-blue-pressed: none;
+  --img-btn-red-normal: none;
+  --img-boss-frame: none;
+  --img-boss-fill: none;
+  --img-pause-panel: none;
+  --img-upgrade-card: none;
+  --img-mobile-pause-normal: none;
+  --img-mobile-pause-pressed: none;
 }
 
 *,
@@ -75,7 +96,7 @@ canvas {
   border-radius: 8px;
   background:
     linear-gradient(90deg, rgba(8, 12, 20, 0.86), rgba(8, 12, 20, 0.22)),
-    url("/assets/ui/kit/sliced/slot-blue.png") center / 100% 100% no-repeat;
+    var(--img-slot-blue) center / 100% 100% no-repeat;
   color: #edf7ff;
 }
 
@@ -109,7 +130,7 @@ canvas {
   padding: 5px 8px;
   overflow: hidden;
   border-radius: 8px;
-  background: url("/assets/ui/kit/sliced/hp-frame.png") center / 100% 100% no-repeat;
+  background: var(--img-hp-frame) center / 100% 100% no-repeat;
 }
 
 .bar-frame i {
@@ -127,18 +148,18 @@ canvas {
 .hp-bar i {
   background:
     linear-gradient(90deg, #ff496c, #ffd767),
-    url("/assets/ui/kit/sliced/hp-fill.png") center / 100% 100% repeat-x;
+    var(--img-hp-fill) center / 100% 100% repeat-x;
 }
 
 .xp-bar {
   height: 18px;
-  background-image: url("/assets/ui/kit/sliced/xp-frame.png");
+  background-image: var(--img-xp-frame);
 }
 
 .xp-bar i {
   background:
     linear-gradient(90deg, #48d7ff, #b2f86e),
-    url("/assets/ui/kit/sliced/xp-fill.png") center / 100% 100% repeat-x;
+    var(--img-xp-fill) center / 100% 100% repeat-x;
 }
 
 .bar-frame b {
@@ -162,7 +183,7 @@ canvas {
   overflow-x: hidden;
   background:
     linear-gradient(90deg, rgba(9, 12, 20, 0.74), rgba(9, 12, 20, 0.5)),
-    url("/assets/ui/lobby-bg.png") center / cover no-repeat,
+    var(--img-lobby-bg) center / cover no-repeat,
     linear-gradient(135deg, rgba(18, 28, 42, 0.94), rgba(22, 13, 28, 0.96));
 }
 
@@ -210,7 +231,7 @@ canvas {
   border-radius: 8px;
   background:
     linear-gradient(90deg, rgba(9, 12, 18, 0.78), rgba(9, 12, 18, 0.32)),
-    url("/assets/ui/kit/sliced/character-card.png") center / 100% 100% no-repeat;
+    var(--img-character-card) center / 100% 100% no-repeat;
 }
 
 .selected-card img {
@@ -280,7 +301,7 @@ canvas {
   border-radius: 8px;
   cursor: pointer;
   font-weight: 900;
-  background: transparent url("/assets/ui/buttons/gold-normal.png") center / 100% 100% no-repeat;
+  background: transparent var(--img-btn-gold-normal) center / 100% 100% no-repeat;
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
 }
 
@@ -291,33 +312,33 @@ canvas {
 }
 
 .image-btn:hover {
-  background-image: url("/assets/ui/buttons/gold-hover.png");
+  background-image: var(--img-btn-gold-hover);
   filter: brightness(1.12);
 }
 
 .image-btn:active {
-  background-image: url("/assets/ui/buttons/gold-pressed.png");
+  background-image: var(--img-btn-gold-pressed);
   transform: translateY(1px);
 }
 
 .image-btn:disabled {
-  background-image: url("/assets/ui/buttons/gray-normal.png");
+  background-image: var(--img-btn-gray-normal);
   cursor: not-allowed;
   filter: grayscale(1) brightness(0.72);
 }
 
 .image-btn.primary {
   color: #071118;
-  background-image: url("/assets/ui/buttons/blue-normal.png");
+  background-image: var(--img-btn-blue-normal);
 }
 
-.image-btn.primary:hover { background-image: url("/assets/ui/buttons/blue-hover.png"); }
-.image-btn.primary:active { background-image: url("/assets/ui/buttons/blue-pressed.png"); }
+.image-btn.primary:hover { background-image: var(--img-btn-blue-hover); }
+.image-btn.primary:active { background-image: var(--img-btn-blue-pressed); }
 .image-btn.small { min-height: 42px; font-size: 13px; }
 .image-btn.wide { width: 100%; margin-top: 12px; }
 .image-btn.danger {
   color: #fff1ef;
-  background-image: url("/assets/ui/buttons/red-normal.png");
+  background-image: var(--img-btn-red-normal);
 }
 
 .text-btn {
@@ -381,7 +402,7 @@ canvas {
   border-radius: 8px;
   background:
     linear-gradient(90deg, rgba(9, 12, 18, 0.72), rgba(9, 12, 18, 0.34)),
-    url("/assets/ui/kit/sliced/character-card.png") center / 100% 100% no-repeat;
+    var(--img-character-card) center / 100% 100% no-repeat;
 }
 
 .character-select {
@@ -497,7 +518,7 @@ canvas {
   min-width: 260px;
   padding: 8px 14px 12px;
   pointer-events: none;
-  background: url("/assets/ui/kit/sliced/boss-frame.png") center / 100% 100% no-repeat;
+  background: var(--img-boss-frame) center / 100% 100% no-repeat;
   transform: translateX(-50%);
 }
 
@@ -516,7 +537,7 @@ canvas {
   border-radius: 999px;
   background:
     linear-gradient(90deg, #ff496c, #ffd767),
-    url("/assets/ui/kit/sliced/boss-fill.png") center / 100% 100% repeat-x;
+    var(--img-boss-fill) center / 100% 100% repeat-x;
   transform-origin: left center;
 }
 
@@ -540,7 +561,7 @@ canvas {
   padding: 26px;
   background:
     linear-gradient(180deg, rgba(13, 17, 28, 0.86), rgba(9, 12, 20, 0.94)),
-    url("/assets/ui/kit/sliced/pause-panel.png") center / 100% 100% no-repeat;
+    var(--img-pause-panel) center / 100% 100% no-repeat;
 }
 
 #levelup {
@@ -568,7 +589,7 @@ canvas {
   border-radius: 8px;
   background:
     linear-gradient(90deg, rgba(28, 21, 15, 0.5), rgba(28, 21, 15, 0.18)),
-    url("/assets/ui/kit/sliced/upgrade-card.png") center / 100% 100% no-repeat;
+    var(--img-upgrade-card) center / 100% 100% no-repeat;
 }
 
 .mobile-pause-btn,
@@ -663,12 +684,12 @@ canvas {
     height: 58px;
     border: 0;
     padding: 0;
-    background: url("/assets/ui/mobile/pause-normal.png") center / contain no-repeat;
+    background: var(--img-mobile-pause-normal) center / contain no-repeat;
     filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.55));
   }
 
   .mobile-pause-btn.paused {
-    background-image: url("/assets/ui/mobile/pause-pressed.png");
+    background-image: var(--img-mobile-pause-pressed);
   }
 
   .touch-joystick {

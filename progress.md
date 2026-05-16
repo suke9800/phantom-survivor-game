@@ -45,6 +45,11 @@ Progress:
 - Added mobile touch controls: a bottom-left joystick for movement and a GPT-image top-right pause/play button that works while the pause overlay is open. Desktop keyboard/ESC controls still work.
 - Rewrote the broken Korean UI strings across HTML/runtime and added regression tests for Korean lobby root actions, locked stage flow, coherent map debug state, character frame stability, mobile controls, and save-slot persistence. `npm.cmd run build` and `npx.cmd playwright test --reporter=line` both pass.
 - Browser QA captured updated screenshots: `phantom-upgrade-start-panel.png`, `phantom-upgrade-gameplay.png`, `phantom-upgrade-mobile-gameplay.png`, and `phantom-upgrade-mobile-pause.png`. Clean browser check reported no console errors or non-aborted request failures.
+- Boosted effective SFX output while keeping both BGM and SFX sliders at a 50% default, and added UI interaction sounds for panel opens, selections, settings changes, pause, reset, and upgrade picks.
+- Increased enemy contact damage so mistakes are dangerous instead of only reducing HP by tiny chip damage.
+- Generated and integrated seamless-v2 graveyard and academy terrain tile sets, then changed terrain drawing to repeat the original 4x4 source order so map seams are less grid-like.
+- Added GitHub Pages deployment through `.github/workflows/pages.yml` and fixed Vite base-path asset loading so PHANTOM can run from `https://suke9800.github.io/phantom-survivor-game/` as well as local dev.
+- Latest verification: `npm.cmd run build` passes and `npx.cmd playwright test --reporter=line` passes 8/8 tests.
 
 TODO:
 - Optional polish: add manual code splitting if the Phaser bundle-size warning becomes important for deployment.
