@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="76" viewBox="0 0 64 76">
+  <defs>
+    <filter id="soft"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity=".45"/></filter>
+    <radialGradient id="glow" cx="35%" cy="30%" r="70%"><stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset=".45" stop-color="#9cecff" stop-opacity=".5"/><stop offset="1" stop-color="#1d2b38" stop-opacity="0"/></radialGradient>
+  </defs>
+  
+    <ellipse cx="32" cy="66" rx="20" ry="7" fill="#05080c" opacity=".35"/>
+    <circle cx="32" cy="36" r="23" fill="#111923" filter="url(#soft)"/>
+    <circle cx="32" cy="29" r="14" fill="#e6dcc0"/>
+    <path d="M19 43 Q32 35 45 43 V66 Q32 75 19 66Z" fill="#31495b"/>
+    <rect x="23" y="48" width="18" height="5" rx="1" fill="#f0c85d"/>
+    <circle cx="38" cy="29" r="3" fill="#71eaff"/>
+    <path d="M17 45 q-7 8-1 20" stroke="#172334" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <path d="M47 43 q7 8 1 20" stroke="#172334" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <rect x="24" y="66.8" width="7" height="9" rx="2" fill="#223749"/>
+    <rect x="35" y="66" width="7" height="9" rx="2" fill="#223749"/>
+    <circle cx="32" cy="36" r="25" fill="none" stroke="#6ce3ff" stroke-opacity=".35" stroke-width="2"/>
+  
+</svg>

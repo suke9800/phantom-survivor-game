@@ -1,0 +1,17 @@
+{
+  "style": "top-down dark fantasy, readable 2D survivor sprites, transparent backgrounds; heroine is a tasteful young adult anime-style Japanese school uniform character",
+  "runtimeKeys": {
+    "characters": ["hero", "hero0", "hero1"],
+    "enemies": ["bat", "bat0", "bat1", "slime", "slime0", "slime1", "skull", "skull0", "skull1", "mage", "mage0", "mage1", "reaper"],
+    "pickups": ["xp", "heart", "magnet", "bomb"],
+    "weapons": ["sparkShot", "bladeShot", "boltShot", "flameShot"]
+  },
+  "targetCells": {
+    "hero": { "width": 64, "height": 76 },
+    "enemy": { "width": 48, "height": 48 },
+    "boss": { "width": 96, "height": 96 },
+    "item": { "width": 32, "height": 32 },
+    "weaponFx": { "width": 32, "height": 32 }
+  },
+  "status": "GPT-generated PNG atlas is active under public/assets/gpt-sprites; legacy generated SVG sprites remain under public/assets/sprites as fallback references"
+}

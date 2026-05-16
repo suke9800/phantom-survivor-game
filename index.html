@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>PHANTOM</title>
+  </head>
+  <body>
+    <div id="game-root"></div>
+
+    <div id="hud" hidden>
+      <div class="hud-left">
+        <div class="weapon-strip" data-weapons></div>
+      </div>
+      <div class="combat-bars">
+        <div class="bar-frame hp-bar">
+          <i data-hp-fill></i>
+          <b data-hp>100/100</b>
+        </div>
+        <div class="bar-frame xp-bar">
+          <i data-xp></i>
+          <b><span data-level>Lv.1</span> · 경험치</b>
+        </div>
+      </div>
+      <div class="hud-right">
+        <strong data-stage-label>밤의 묘지</strong>
+        <span data-time>00:00</span>
+        <span>처치 <b data-kills>0</b></span>
+      </div>
+    </div>
+
+    <button id="mobile-pause-btn" class="mobile-pause-btn" type="button" aria-label="일시정지" hidden></button>
+    <div id="touch-joystick" class="touch-joystick" aria-label="이동 조이스틱" hidden>
+      <i data-stick></i>
+    </div>
+
+    <div id="lobby">
+      <div class="lobby-shell">
+        <section class="lobby-hero">
+          <img class="phantom-logo" src="/assets/ui/brand/phantom-logo.png" alt="PHANTOM" />
+          <div class="selected-card" data-selected-character>
+            <img src="/assets/characters/v2/aoi-portrait.png" alt="" data-selected-portrait />
+            <div>
+              <strong data-selected-name>아오이</strong>
+              <span data-selected-role>푸른 교복 마도사</span>
+            </div>
+          </div>
+          <div class="title-art">
+            <img src="/assets/characters/v2/aoi-0.png" alt="" />
+            <img src="/assets/gpt-sprites/sliced/reaper.png" alt="" />
+            <img src="/assets/gpt-sprites/sliced/slime.png" alt="" />
+          </div>
+          <p data-lobby-summary>캐릭터와 스테이지를 고르고 10분 동안 몰려오는 귀여운 악령들을 버티세요.</p>
+        </section>
+
+        <section class="lobby-panel">
+          <div class="lobby-actions" aria-label="로비 메뉴">
+            <button class="image-btn primary" id="start-flow-btn" type="button"><span>게임 시작</span></button>
+            <button class="image-btn" id="load-btn" type="button"><span>불러오기</span></button>
+            <button class="image-btn" id="settings-root-btn" type="button"><span>설정</span></button>
+          </div>
+
+          <div class="panel-stack">
+            <div class="menu-panel active" data-panel="home">
+              <h2>로비</h2>
+              <p>왼쪽 버튼으로 출전 준비, 저장 기록, 음량 설정을 열 수 있습니다.</p>
+              <p data-save-status>저장 정보를 불러오는 중입니다.</p>
+            </div>
+
+            <div class="menu-panel" data-panel="start">
+              <div class="panel-title-row">
+                <h2>출전 준비</h2>
+                <button class="text-btn" data-open-panel="home" type="button">닫기</button>
+              </div>
+              <h3>캐릭터 선택</h3>
+              <div class="character-list" data-character-list></div>
+              <h3>맵 선택</h3>
+              <div class="stage-choice">
+                <label data-stage-card="graveyard">
+                  <input type="radio" name="stage" value="graveyard" checked />
+                  <span>밤의 묘지</span>
+                  <small>어두운 풀, 묘비, 안개, 무너진 돌길이 이어지는 첫 번째 생존 지역입니다.</small>
+                </label>
+                <label data-stage-card="academy">
+                  <input type="radio" name="stage" value="academy" />
+                  <span>붉은 학원 폐허</span>
+                  <small>밤의 묘지를 10분 버티면 해금됩니다. 붉은 석재와 마법진이 깔린 두 번째 지역입니다.</small>
+                  <em data-lock-label>잠김</em>
+                </label>
+              </div>
+              <button class="image-btn primary wide" id="start-btn" type="button"><span>출전</span></button>
+            </div>
+
+            <div class="menu-panel" data-panel="load">
+              <div class="panel-title-row">
+                <h2>불러오기</h2>
+                <button class="text-btn" data-open-panel="home" type="button">닫기</button>
+              </div>
+              <div class="records-list" data-records-list></div>
+            </div>
+
+            <div class="menu-panel" data-panel="settings">
+              <div class="panel-title-row">
+                <h2>설정</h2>
+                <button class="text-btn" data-open-panel="home" type="button">닫기</button>
+              </div>
+              <label class="toggle-row">
+                <input type="checkbox" id="sound-toggle" checked />
+                <span>소리 켜기</span>
+              </label>
+              <label class="range-row">
+                <span>배경음</span>
+                <input type="range" id="bgm-volume" min="0" max="1" step="0.05" value="0.5" />
+              </label>
+              <label class="range-row">
+                <span>효과음</span>
+                <input type="range" id="sfx-volume" min="0" max="1" step="0.05" value="0.5" />
+              </label>
+              <button class="image-btn small danger" id="reset-save-btn" type="button"><span>저장 초기화</span></button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div id="pause-menu" hidden>
+      <div class="pause-panel">
+        <h2>일시정지</h2>
+        <button class="image-btn primary" id="resume-btn" type="button"><span>계속하기</span></button>
+        <button class="image-btn" id="restart-btn" type="button"><span>다시 시작</span></button>
+        <button class="image-btn" id="pause-lobby-btn" type="button"><span>저장하고 로비</span></button>
+        <label class="toggle-row">
+          <input type="checkbox" id="pause-sound-toggle" checked />
+          <span>소리 켜기</span>
+        </label>
+      </div>
+    </div>
+
+    <div id="boss-hud" hidden>
+      <span data-boss-name>보스</span>
+      <b data-boss-hp></b>
+    </div>
+
+    <div id="levelup" hidden>
+      <h2>업그레이드 선택</h2>
+      <div data-options></div>
+    </div>
+
+    <div id="result" hidden>
+      <div class="result-panel">
+        <h2 data-result-title>결과</h2>
+        <p data-result-body></p>
+        <button class="image-btn primary" id="result-lobby-btn" type="button"><span>로비로</span></button>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
