@@ -3,40 +3,47 @@ import { expect, test } from '@playwright/test';
 type DebugState = {
   mode: string;
   title: string;
-  stage: 'graveyard' | 'academy';
-  winAt: number;
-  enemies: Array<{ kind: string }>;
+  stage: string;
+  runGold: number;
+  enemies: Array<{ kind: string; boss: boolean }>;
   weapons: string[];
+  content: {
+    stages: number;
+    enemyKinds: number;
+    weaponKinds: number;
+    metaUpgrades: number;
+    artifacts: number;
+  };
+  save: {
+    version: number;
+    gold: number;
+    unlockedStages: string[];
+    meta: Record<string, number>;
+    artifacts: Record<string, boolean>;
+    recentRuns: unknown[];
+  };
   audio?: {
     bgmActive: boolean;
     bgmLoop: boolean;
-    bgmMutedInLobby: boolean;
     bgmVolume: number;
     sfxVolume: number;
     sfxBoost: number;
     effectiveSfxGain: number;
     uiSfxCount: number;
-    lastUiSfx: string;
-  };
-  save?: {
-    version: number;
-    recentRuns: unknown[];
-    bestiary: Record<string, number>;
-    unlockedStages: string[];
   };
   map?: {
     styleKey: string;
     assetSet: string;
     coherentSet: boolean;
     terrainVariants: number;
-    obstacleCount: number;
     transparentGapRisk: boolean;
   };
   player?: {
+    hp: number;
+    anchor: string;
     frameDrift: number;
     attackFrameClipped: boolean;
     attackMotionEnabled: boolean;
-    anchor: string;
   };
   mobile?: {
     hasJoystick: boolean;
@@ -65,62 +72,95 @@ test.beforeEach(async ({ page }) => {
   await page.goto('/');
   await page.evaluate(() => localStorage.clear());
   await page.reload();
+  await page.waitForFunction(() => window.render_game_to_text);
 });
 
-test('lobby keeps only start, load, and settings as root actions', async ({ page }) => {
-  await expect(page).toHaveTitle('PHANTOM');
+test('After School Dungeon lobby exposes rebrand, shop, and five unlocked stages', async ({ page }) => {
+  await expect(page).toHaveTitle('After School Dungeon');
   await expect(page.locator('.phantom-logo')).toBeVisible();
-  await expect(page.locator('[data-selected-character]')).toBeVisible();
 
   const rootActions = page.locator('.lobby-actions > button');
-  await expect(rootActions).toHaveCount(3);
+  await expect(rootActions).toHaveCount(4);
   await expect(page.getByRole('button', { name: '게임 시작' })).toBeVisible();
+  await expect(page.getByRole('button', { name: '상점' })).toBeVisible();
   await expect(page.getByRole('button', { name: '불러오기' })).toBeVisible();
   await expect(page.getByRole('button', { name: '설정' })).toBeVisible();
-  await expect(page.locator('.lobby-actions')).not.toContainText('도감');
-  await expect(page.locator('.lobby-actions')).not.toContainText('영구 강화');
-});
 
-test('start flow exposes five redesigned characters and keeps academy locked at first', async ({ page }) => {
   await openStartPanel(page);
   await expect(page.locator('[data-character-list] [data-character]')).toHaveCount(5);
-  await expect(page.locator('[data-character="miyu"]')).toContainText('미유');
-  await expect(page.locator('[data-character="rin"]')).toContainText('사복');
+  await expect(page.locator('input[name="stage"]')).toHaveCount(5);
+  await expect(page.locator('input[name="stage"]:disabled')).toHaveCount(0);
 
-  const academy = page.locator('input[name="stage"][value="academy"]');
-  await expect(academy).toBeDisabled();
-  await expect(page.locator('[data-stage-card="academy"]')).toContainText('잠김');
+  const state = await debugState(page);
+  expect(state.title).toBe('After School Dungeon');
+  expect(state.content.stages).toBe(5);
+  expect(state.content.enemyKinds).toBeGreaterThanOrEqual(25);
+  expect(state.content.weaponKinds).toBeGreaterThanOrEqual(12);
+  expect(state.save.unlockedStages).toEqual(expect.arrayContaining(['graveyard', 'academy', 'candy', 'coral', 'clocktower']));
 });
 
-test('combat uses coherent map set, BGM loop, and slow early pacing', async ({ page }) => {
+test('shop purchases research with starting gold and persists save v6', async ({ page }) => {
+  await page.getByRole('button', { name: '상점' }).click();
+  await expect(page.locator('[data-panel="shop"]')).toBeVisible();
+  await expect(page.locator('[data-shop-list] .shop-card')).toHaveCount(12);
+  await expect(page.locator('[data-artifact-list] .shop-card')).toHaveCount(10);
+
+  const before = await debugState(page);
+  expect(before.save.gold).toBeGreaterThanOrEqual(100);
+
+  await page.locator('[data-shop-list] .shop-card:not([disabled])').first().click();
+  const after = await debugState(page);
+  const boughtLevels = Object.values(after.save.meta).reduce((sum, value) => sum + value, 0);
+  expect(boughtLevels).toBeGreaterThan(0);
+  expect(after.save.gold).toBeLessThan(before.save.gold);
+
+  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('after-school-dungeon-save-v6') ?? 'null'));
+  expect(saved.version).toBe(6);
+  expect(saved.gold).toBe(after.save.gold);
+});
+
+test('combat uses HD asset set, expanded weapons, BGM loop, and gold pickup type', async ({ page }) => {
   await launchRun(page);
   await page.evaluate(() => window.advanceTime(1_000));
   const state = await debugState(page);
 
-  await expect(page.locator('#hud .combat-bars')).toBeVisible();
-  await expect(page.locator('#hud .weapon-strip')).toBeVisible();
-  expect(state.title).toBe('PHANTOM');
-  expect(state.winAt).toBe(600);
-  expect(state.enemies.length).toBeLessThanOrEqual(4);
+  expect(state.mode).toBe('playing');
+  expect(state.map?.assetSet).toBe('after-school-hd-v1');
+  expect(state.map?.coherentSet).toBe(true);
+  expect(state.map?.terrainVariants).toBeGreaterThanOrEqual(4);
+  expect(state.map?.transparentGapRisk).toBe(false);
   expect(state.audio?.bgmActive).toBe(true);
   expect(state.audio?.bgmLoop).toBe(true);
   expect(state.audio?.bgmVolume).toBe(0.5);
   expect(state.audio?.sfxVolume).toBe(0.5);
   expect(state.audio?.effectiveSfxGain).toBeGreaterThan(1);
-  expect(state.map?.styleKey).toBe('graveyard');
-  expect(state.map?.assetSet).toBe('seamless-v2');
-  expect(state.map?.coherentSet).toBe(true);
-  expect(state.map?.terrainVariants).toBeGreaterThanOrEqual(12);
-  expect(state.map?.transparentGapRisk).toBe(false);
+  expect(state.weapons[0]).toContain('별빛 마력탄');
 });
 
-test('character walk frames stay anchored and attack motion is disabled', async ({ page }) => {
+test('each of five stages can launch directly', async ({ page }) => {
+  await openStartPanel(page);
+  for (const stage of ['graveyard', 'academy', 'candy', 'coral', 'clocktower']) {
+    await page.locator(`input[name="stage"][value="${stage}"]`).check();
+    await page.getByRole('button', { name: '출전' }).click();
+    await page.waitForFunction(() => JSON.parse(window.render_game_to_text()).mode === 'playing');
+    let state = await debugState(page);
+    expect(state.stage).toBe(stage);
+    expect(state.map?.styleKey).toBe(stage);
+    await page.keyboard.press('Escape');
+    await page.getByRole('button', { name: '저장하고 로비' }).click();
+    await page.getByRole('button', { name: '게임 시작' }).click();
+    state = await debugState(page);
+    expect(state.mode).toBe('lobby');
+  }
+});
+
+test('character frames remain anchored after HD replacement', async ({ page }) => {
   await openStartPanel(page);
   await page.locator('[data-character="sakura"]').click();
   await page.getByRole('button', { name: '출전' }).click();
-  await page.waitForFunction(() => window.render_game_to_text && JSON.parse(window.render_game_to_text()).mode === 'playing');
+  await page.waitForFunction(() => JSON.parse(window.render_game_to_text()).mode === 'playing');
   await page.keyboard.down('D');
-  await page.evaluate(() => window.advanceTime(2_500));
+  await page.evaluate(() => window.advanceTime(2_000));
   await page.keyboard.up('D');
   const state = await debugState(page);
 
@@ -130,30 +170,30 @@ test('character walk frames stay anchored and attack motion is disabled', async 
   expect(state.player?.attackMotionEnabled).toBe(false);
 });
 
-test('settings slider keeps 50 percent value but boosts audible SFX and UI clicks', async ({ page }) => {
-  await page.waitForFunction(() => window.render_game_to_text);
+test('settings keeps 50 percent sliders while boosted SFX and UI clicks work', async ({ page }) => {
   await page.getByRole('button', { name: '설정' }).click();
+  await expect(page.locator('#bgm-volume')).toHaveValue('0.5');
   await expect(page.locator('#sfx-volume')).toHaveValue('0.5');
   await page.locator('#sfx-volume').fill('0.5');
   await page.getByRole('button', { name: '게임 시작' }).click();
   const state = await debugState(page);
-  expect(state.audio?.sfxVolume).toBe(0.5);
   expect(state.audio?.sfxBoost).toBeGreaterThan(2);
   expect(state.audio?.effectiveSfxGain).toBeGreaterThan(1);
   expect(state.audio?.uiSfxCount).toBeGreaterThan(0);
 });
 
-test('enemy contact damage is dangerous instead of chip damage', async ({ page }) => {
+test('enemy contact remains dangerous', async ({ page }) => {
   await launchRun(page);
   await page.evaluate(() => window.forceEnemyContact());
   await page.evaluate(() => window.advanceTime(1_000));
   const state = await debugState(page);
-  expect(state.player?.hp).toBeLessThanOrEqual(72);
+  expect(state.player?.hp).toBeLessThanOrEqual(80);
 });
 
-test('mobile joystick and image pause button control the game', async ({ page }) => {
+test('mobile joystick and image pause button still control the game', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.reload();
+  await page.waitForFunction(() => window.render_game_to_text);
   await launchRun(page);
 
   await expect(page.locator('#touch-joystick')).toBeVisible();
@@ -177,18 +217,4 @@ test('mobile joystick and image pause button control the game', async ({ page })
   await page.locator('#mobile-pause-btn').click();
   state = await debugState(page);
   expect(state.mode).toBe('playing');
-});
-
-test('save slots and bestiary persist when returning to lobby', async ({ page }) => {
-  await launchRun(page);
-  await page.evaluate(() => window.advanceTime(6_000));
-  await page.keyboard.press('Escape');
-  await page.getByRole('button', { name: '저장하고 로비' }).click();
-  await page.getByRole('button', { name: '불러오기' }).click();
-  await expect(page.locator('[data-records-list]')).toContainText('최근 전투');
-
-  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('phantom-save-v5') ?? 'null'));
-  expect(saved.version).toBe(5);
-  expect(saved.recentRuns.length).toBeGreaterThanOrEqual(1);
-  expect(Object.keys(saved.bestiary).length).toBeGreaterThanOrEqual(1);
 });

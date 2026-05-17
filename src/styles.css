@@ -13,6 +13,8 @@
   --img-xp-fill: none;
   --img-lobby-bg: none;
   --img-character-card: none;
+  --img-stage-card: none;
+  --img-shop-panel: none;
   --img-btn-gold-normal: none;
   --img-btn-gold-hover: none;
   --img-btn-gold-pressed: none;
@@ -56,6 +58,7 @@ canvas {
 
 canvas {
   display: block;
+  image-rendering: auto;
 }
 
 [hidden] {
@@ -215,7 +218,6 @@ canvas {
   display: block;
   width: min(100%, 560px);
   margin: 0 auto 16px;
-  mix-blend-mode: screen;
   filter: drop-shadow(0 12px 20px rgba(84, 217, 255, 0.24));
 }
 
@@ -268,6 +270,21 @@ canvas {
 .title-art img:nth-child(1) { width: 88px; }
 .title-art img:nth-child(2) { width: 118px; }
 .title-art img:nth-child(3) { width: 62px; }
+
+.gold-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 5px 14px;
+  color: #fff5d5;
+  border-radius: 999px;
+  background: rgba(255, 215, 103, 0.12);
+}
+
+.gold-line b {
+  color: var(--gold);
+}
 
 .lobby-hero p,
 .menu-panel p {
@@ -387,7 +404,8 @@ canvas {
 }
 
 .character-list,
-.records-list {
+.records-list,
+.shop-list {
   display: grid;
   gap: 10px;
   max-height: min(310px, calc(100vh - 390px));
@@ -397,7 +415,8 @@ canvas {
 
 .character-select,
 .records-list article,
-.stage-choice label {
+.stage-choice label,
+.shop-card {
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
   background:
@@ -461,6 +480,9 @@ canvas {
   grid-template-columns: 22px 1fr;
   gap: 8px;
   padding: 14px;
+  background:
+    linear-gradient(90deg, rgba(9, 12, 18, 0.72), rgba(9, 12, 18, 0.34)),
+    var(--img-stage-card) center / 100% 100% no-repeat;
   cursor: pointer;
 }
 
@@ -489,6 +511,50 @@ canvas {
 
 .records-list article {
   padding: 14px;
+}
+
+.shop-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 5px 12px;
+  width: 100%;
+  min-height: 72px;
+  padding: 12px 14px;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.shop-card strong,
+.shop-card span {
+  grid-column: 1;
+}
+
+.shop-card strong {
+  color: var(--gold);
+}
+
+.shop-card strong em {
+  color: var(--cyan);
+  font-style: normal;
+  font-size: 12px;
+}
+
+.shop-card span {
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.shop-card b {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  color: #fff4ce;
+}
+
+.shop-card:disabled {
+  opacity: 0.52;
+  cursor: not-allowed;
 }
 
 .toggle-row,
@@ -613,7 +679,7 @@ canvas {
   }
 
   .lobby-actions {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     border-right: 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
@@ -621,7 +687,7 @@ canvas {
   .image-btn {
     min-height: 44px;
     padding-inline: 8px;
-    font-size: 13px;
+    font-size: clamp(11px, 2.8vw, 13px);
   }
 
   .lobby-hero {

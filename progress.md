@@ -50,6 +50,12 @@ Progress:
 - Generated and integrated seamless-v2 graveyard and academy terrain tile sets, then changed terrain drawing to repeat the original 4x4 source order so map seams are less grid-like.
 - Added GitHub Pages deployment through `.github/workflows/pages.yml` and fixed Vite base-path asset loading so PHANTOM can run from `https://suke9800.github.io/phantom-survivor-game/` as well as local dev.
 - Latest verification: `npm.cmd run build` passes and `npx.cmd playwright test --reporter=line` passes 8/8 tests.
+- Implemented the `After School Dungeon` rebrand. Generated GPT-based high-resolution logo/UI, character, VFX, monster, and five-stage map atlases, copied source atlases into `public/assets/source/after-school`, and sliced runtime assets into `public/assets/ui/after-school`, `characters/after-school`, `vfx/after-school`, `monsters/after-school`, and `maps/after-school`.
+- Replaced the runtime with save version `after-school-dungeon-save-v6`: 5 unlocked stages, 25 enemy kinds, 12 weapon kinds, 12 research upgrades, 10 artifact unlocks, gold currency, and shop purchasing.
+- Changed gold economy to monster drop pickups plus stage-clear bonuses only. Removed kill/time payout from the planned economy.
+- Added HD anime-style character frames at 256x384 with bottom-center anchoring, smooth Phaser rendering, expanded weapon VFX for flame breath, frost breath, poison cloud, magic field, chain lightning, shield orb, star shots, crystal shots, and gold pickups.
+- Reprocessed map tiles with mirrored seamless and averaged stage bases to reduce visible square seams, especially on mobile.
+- Updated Playwright regression tests for the rebrand, shop, five unlocked stages, HD asset set, SFX boost, contact danger, and mobile controls. Latest verification: `npm.cmd run build` passes and `npx.cmd playwright test --reporter=line` passes 8/8 tests.
 
 TODO:
 - Optional polish: add manual code splitting if the Phaser bundle-size warning becomes important for deployment.
