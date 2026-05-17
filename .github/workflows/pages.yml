@@ -1,4 +1,4 @@
-name: Deploy PHANTOM
+name: Deploy After School Dungeon
 
 on:
   push:
